@@ -493,9 +493,12 @@ nav{gap:clamp(10px,1.7vw,26px)}
             <p class="direct-phone"><a href="tel:+639774031805" aria-label="Call 0977 403 1805">Call 0977 403 1805</a><a href="https://wa.me/639774031805">WhatsApp</a></p>
           </address>
         </div>
-        <form class="contact-form" id="contact-form" aria-label="Contact Ustadh Abdulrahman" aria-describedby="contact-status" method="post" action="https://formsubmit.co/supremecouncilulamadavao@gmail.com" data-reveal>
+        <form class="contact-form" id="contact-form" aria-label="Contact Ustadh Abdulrahman" aria-describedby="contact-status" method="post" action="https://formsubmit.co/abdulrahman.caderao.87@gmail.com" data-reveal>
           <input type="hidden" name="_subject" value="New Website Inquiry — Ustadh Abdulrahman G. Caderao">
           <input type="hidden" name="_template" value="table">
+          <!-- FormSubmit forwards accepted inquiries to the Make.com scenario. -->
+          <input type="hidden" name="_webhook" id="make-webhook" value="https://hook.us2.make.com/9bc738m1msm7feui8xclqrcpga2brbox">
+          <input type="hidden" name="_url" value="https://abdulrahmancaderao.github.io/official/">
           <input type="hidden" name="_captcha" value="false">
           <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;opacity:0;width:1px;height:1px;" />
           <fieldset id="contact-fields">
@@ -508,7 +511,7 @@ nav{gap:clamp(10px,1.7vw,26px)}
             <label>Message <span aria-hidden="true">*</span><textarea name="message" rows="4" maxlength="4000" required placeholder="Tell us about your inquiry"></textarea></label>
             <button type="submit" class="button">Send Inquiry</button>
           </fieldset>
-          <p class="form-status" id="contact-status" role="status">Your inquiry will be sent to the Supreme Council of Ulama Davao inbox. Email delivery requires the recipient to activate the form on first use.</p>
+          <p class="form-status" id="contact-status" role="status">Inquiries will be sent to abdulrahman.caderao.87@gmail.com after the recipient activates FormSubmit. Make webhook forwarding is configured; activate FormSubmit and finish the Google Sheets scenario to record inquiries automatically.</p>
         </form>
       </div>
     </section>
@@ -516,7 +519,7 @@ nav{gap:clamp(10px,1.7vw,26px)}
   <footer class="footer"><div class="frame footer-inner"><p>Ustadh Abdulrahman G. Caderao</p><a href="#top">Back to top</a></div></footer>
 <script>
 /* GitHub Pages uses FormSubmit to deliver inquiries. Recipient must activate first-use email. */
-window.profileContent = { contact: { endpoint: "https://formsubmit.co/ajax/supremecouncilulamadavao@gmail.com" } };
+window.profileContent = { contact: { endpoint: "https://formsubmit.co/ajax/abdulrahman.caderao.87@gmail.com" } };
 
 </script>
 <script>
@@ -603,7 +606,7 @@ window.profileContent = { contact: { endpoint: "https://formsubmit.co/ajax/supre
       const accepted = result.success === true || result.success === "true" || result.success === "True";
       if (!response.ok || !accepted) throw new Error(result.message || "The service did not accept your submission");
       form.reset();
-      status.textContent = "Your inquiry was accepted by the contact service. Delivery to the inbox requires first-time activation by the recipient. Thank you.";
+      status.textContent = "Your inquiry was accepted by the contact service. Email delivery requires first-time activation by the recipient. Thank you.";
     } catch (error) {
       status.textContent = "The inquiry could not be submitted. Your information is still here. Please try again, or use the email or WhatsApp contact links.";
     } finally {
