@@ -493,8 +493,12 @@ nav{gap:clamp(10px,1.7vw,26px)}
             <p class="direct-phone"><a href="tel:+639774031805" aria-label="Call 0977 403 1805">Call 0977 403 1805</a><a href="https://wa.me/639774031805">WhatsApp</a></p>
           </address>
         </div>
-        <form class="contact-form" id="contact-form" aria-label="Contact Ustadh Abdulrahman" aria-describedby="contact-status" method="post" data-reveal>
-          <fieldset id="contact-fields" disabled>
+        <form class="contact-form" id="contact-form" aria-label="Contact Ustadh Abdulrahman" aria-describedby="contact-status" method="post" action="https://formsubmit.co/supremecouncilulamadavao@gmail.com" data-reveal>
+          <input type="hidden" name="_subject" value="New Website Inquiry — Ustadh Abdulrahman G. Caderao">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;opacity:0;width:1px;height:1px;" />
+          <fieldset id="contact-fields">
             <legend>Send an inquiry</legend>
             <label>Full name <span aria-hidden="true">*</span><input name="full_name" autocomplete="name" required maxlength="120" placeholder="Your full name"></label>
             <div class="contact-pair">
@@ -504,15 +508,15 @@ nav{gap:clamp(10px,1.7vw,26px)}
             <label>Message <span aria-hidden="true">*</span><textarea name="message" rows="4" maxlength="4000" required placeholder="Tell us about your inquiry"></textarea></label>
             <button type="submit" class="button">Send Inquiry</button>
           </fieldset>
-          <p class="form-status" id="contact-status" role="status">The form is not connected yet. Please use the direct contact options.</p>
+          <p class="form-status" id="contact-status" role="status">Your inquiry will be sent to the Supreme Council of Ulama Davao inbox. Email delivery requires the recipient to activate the form on first use.</p>
         </form>
       </div>
     </section>
   </main>
   <footer class="footer"><div class="frame footer-inner"><p>Ustadh Abdulrahman G. Caderao</p><a href="#top">Back to top</a></div></footer>
 <script>
-/* Set endpoint to the exact HTTPS submit URL after verifying the recipient and testing delivery. */
-window.profileContent = { contact: { endpoint: "" } };
+/* GitHub Pages uses FormSubmit to deliver inquiries. Recipient must activate first-use email. */
+window.profileContent = { contact: { endpoint: "https://formsubmit.co/ajax/supremecouncilulamadavao@gmail.com" } };
 
 </script>
 <script>
@@ -574,35 +578,40 @@ window.profileContent = { contact: { endpoint: "" } };
   const form = document.querySelector("#contact-form");
   const fields = document.querySelector("#contact-fields");
   const status = document.querySelector("#contact-status");
+  const sendButton = form.querySelector('button[type="submit"]');
   let endpoint;
   if (settings.endpoint) {
     try {
-      const url = new URL(settings.endpoint, location.href);
-      if (url.protocol === "https:" && !url.username && !url.password) endpoint = url;
+      const url = new URL(settings.endpoint);
+      if (url.protocol === "https:" && url.hostname === "formsubmit.co") endpoint = url;
     } catch {}
   }
   form.addEventListener("submit", async event => {
+    // Without an AJAX endpoint, preserve the normal HTML POST fallback.
+    if (!endpoint) return;
     event.preventDefault();
-    if (!endpoint || !form.reportValidity()) return;
+    if (!form.reportValidity()) return;
     const data = new FormData(form);
     fields.disabled = true;
-    status.textContent = "Sending your inquiry…";
+    sendButton.textContent = "Sending…";
+    status.textContent = "Submitting your inquiry…";
     try {
-      const response = await fetch(endpoint, {method:"POST", body:data, headers:{Accept:"application/json"}, credentials:"omit", redirect:"error"});
+      const response = await fetch(endpoint.href, {
+        method: "POST", body: data, headers: { Accept: "application/json" }
+      });
       const result = await response.json();
-      if (!response.ok || (result.ok !== true && result.sent !== true)) throw Error("Submission not accepted");
+      const accepted = result.success === true || result.success === "true" || result.success === "True";
+      if (!response.ok || !accepted) throw new Error(result.message || "The service did not accept your submission");
       form.reset();
-      status.textContent = "Your inquiry was sent. Thank you for getting in touch.";
-    } catch {
-      status.textContent = "Your inquiry couldn’t be sent. Your details are still here so you can try again.";
-    } finally { fields.disabled = false; }
+      status.textContent = "Your inquiry was accepted by the contact service. Delivery to the inbox requires first-time activation by the recipient. Thank you.";
+    } catch (error) {
+      status.textContent = "The inquiry could not be submitted. Your information is still here. Please try again, or use the email or WhatsApp contact links.";
+    } finally {
+      fields.disabled = false;
+      sendButton.textContent = "Send Inquiry";
+    }
   });
-  if (endpoint) {
-    fields.disabled = false;
-    document.querySelector("#hero-contact").hidden = false;
-    status.textContent = "Your details are used only to respond to your inquiry.";
-  }
-
+  document.querySelector("#hero-contact").hidden = false;
   if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const observer = new IntersectionObserver(records => records.forEach(record => {
       if (record.isIntersecting) { record.target.classList.add("reveal-now"); observer.unobserve(record.target); }
